@@ -226,3 +226,42 @@ vaultModal.addEventListener("click", event => {
 
 updateVaultStatus();
 setInterval(updateVaultStatus, 60000);
+
+
+const birthdayLetterButton = document.getElementById("open-birthday-letter");
+const birthdayLetterModal = document.getElementById("birthday-letter-modal");
+const birthdayLetterModalContent = document.getElementById("birthday-letter-modal-content");
+const birthdayLetterSource = document.getElementById("birthday-letter-content");
+const closeBirthdayLetterButton = document.getElementById("close-birthday-letter");
+
+function openBirthdayLetter() {
+  birthdayLetterModalContent.innerHTML = birthdayLetterSource.innerHTML;
+  birthdayLetterModal.classList.add("open");
+  birthdayLetterModal.setAttribute("aria-hidden", "false");
+}
+
+function closeBirthdayLetter() {
+  birthdayLetterModal.classList.remove("open");
+  birthdayLetterModal.setAttribute("aria-hidden", "true");
+}
+
+birthdayLetterButton.addEventListener("click", openBirthdayLetter);
+closeBirthdayLetterButton.addEventListener("click", closeBirthdayLetter);
+birthdayLetterModal.addEventListener("click", event => {
+  if (event.target === birthdayLetterModal) closeBirthdayLetter();
+});
+
+const celebrateLockNote = document.getElementById("celebrate-lock-note");
+
+function updateBirthdayOnlyFeatures() {
+  const now = new Date();
+  const birthdayStart = new Date("2026-07-22T00:00:00+02:00");
+  const birthdayEnd = new Date("2026-07-23T00:00:00+02:00");
+  const isBirthday = now >= birthdayStart && now < birthdayEnd;
+
+  celebrateButton.hidden = !isBirthday;
+  celebrateLockNote.hidden = isBirthday;
+}
+
+updateBirthdayOnlyFeatures();
+setInterval(updateBirthdayOnlyFeatures, 60000);

@@ -583,3 +583,69 @@ footer {
     grid-template-columns: 1fr;
   }
 }
+
+
+.birthday-message-card {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 4rem);
+  text-align: center;
+  background: var(--paper);
+  border: 1px solid rgba(182,107,122,.16);
+  border-radius: 26px;
+  box-shadow: var(--shadow);
+}
+
+.message-envelope {
+  width: 78px;
+  height: 78px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 1.25rem;
+  border-radius: 50%;
+  color: white;
+  background: linear-gradient(135deg, var(--rose), var(--rose-dark));
+  font-size: 2rem;
+}
+
+.birthday-message-card h3 {
+  margin-bottom: .75rem;
+  font-size: 2.4rem;
+}
+
+.birthday-message-card > p {
+  max-width: 540px;
+  margin: 0 auto 1.5rem;
+  color: var(--muted);
+}
+
+.hidden-letter-content {
+  display: none;
+}
+
+.vault-sealed {
+  margin-top: 1.2rem;
+  padding: 1rem;
+  border: 1px dashed rgba(125,63,80,.2);
+  border-radius: 14px;
+  color: var(--muted);
+  background: rgba(255,255,255,.45);
+  font-size: .9rem;
+  text-align: center;
+}
+
+.vault-card.locked .vault-sealed {
+  filter: blur(1.5px);
+  user-select: none;
+}
+
+.celebrate-lock-note {
+  margin: 1rem auto 0 !important;
+  color: #ffe9dc;
+  font-size: .9rem;
+}
+
+.birthday-only[hidden],
+.celebrate-lock-note[hidden] {
+  display: none !important;
+}
