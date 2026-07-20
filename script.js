@@ -164,3 +164,65 @@ if (!isConfigured) {
     }
   });
 }
+
+
+const vaultCards = document.querySelectorAll(".vault-card");
+const vaultModal = document.getElementById("vault-modal");
+const vaultModalContent = document.getElementById("vault-modal-content");
+const closeVaultModalButton = document.getElementById("close-vault-modal");
+
+function formatUnlockDate(date) {
+  return date.toLocaleDateString("en-ZA", {
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  });
+}
+
+function updateVaultStatus() {
+  const now = new Date();
+
+  vaultCards.forEach(card => {
+    const unlockDate = new Date(card.dataset.unlock);
+    const button = card.querySelector(".vault-button");
+    const unlocked = now >= unlockDate;
+
+    card.classList.toggle("unlocked", unlocked);
+    card.classList.toggle("locked", !unlocked);
+
+    if (unlocked) {
+      button.textContent = "Open Letter";
+      button.disabled = false;
+      button.title = "Open this month's letter";
+    } else {
+      button.textContent = `Locked until ${formatUnlockDate(unlockDate)}`;
+      button.disabled = true;
+      button.title = `This letter unlocks on ${formatUnlockDate(unlockDate)}`;
+    }
+  });
+}
+
+vaultCards.forEach(card => {
+  const button = card.querySelector(".vault-button");
+  button.addEventListener("click", () => {
+    if (card.classList.contains("locked")) return;
+
+    const letter = card.querySelector(".vault-letter");
+    vaultModalContent.innerHTML = letter.innerHTML;
+    vaultModal.classList.add("open");
+    vaultModal.setAttribute("aria-hidden", "false");
+  });
+});
+
+function closeVaultModal() {
+  vaultModal.classList.remove("open");
+  vaultModal.setAttribute("aria-hidden", "true");
+}
+
+closeVaultModalButton.addEventListener("click", closeVaultModal);
+vaultModal.addEventListener("click", event => {
+  if (event.target === vaultModal) closeVaultModal();
+});
+
+updateVaultStatus();
+setInterval(updateVaultStatus, 60000);
