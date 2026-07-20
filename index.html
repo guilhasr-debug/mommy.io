@@ -58,88 +58,31 @@
       </div>
     </section>
 
-    <section class="quote-strip">
-      <p>“Some people make the world more beautiful simply by being in it.”</p>
-    </section>
-
-
     <section id="message" class="section message-section">
       <div class="section-heading reveal">
         <p class="eyebrow">A birthday letter just for you</p>
         <h2>Open My Birthday Message</h2>
-        <p>This special letter is waiting for you.</p>
-      </div>
-
-      <div class="birthday-message-card reveal">
-        <div class="message-envelope">✉</div>
-        <h3>A Letter from Claudia</h3>
-        <p>
-          Open this letter to read a heartfelt message written especially for you.
+        <p id="birthday-message-subtext">
+          This special letter will unlock on 22 July 2026.
         </p>
-        <button id="open-birthday-letter" class="button primary" type="button">
-          Open My Birthday Message
-        </button>
-        
-        <div id="birthday-letter-content" class="hidden-letter-content">
-          <h3>You Are Special</h3>
-          <p><strong>My Dearest Desre,</strong></p>
-
-          <p>
-            There are people who come into our lives for a season, and then there
-            are the rare souls who become part of our hearts forever. You are one
-            of those rare people.
-          </p>
-
-          <p>
-            As I sat down to write this letter, I realised that words will never
-            truly be enough to express how grateful I am for you, but I hope they
-            give you even the smallest glimpse into how much you mean to me.
-          </p>
-
-          <p>
-            Thank you for being such an important part of my life. Thank you for
-            choosing to walk beside me through life’s beautiful moments and its
-            difficult ones. Your friendship has been one of the greatest blessings
-            I could ever ask for.
-          </p>
-
-          <p>
-            Thank you for your unwavering love and unconditional friendship.
-            Thank you for always having my back, even when I didn’t have the
-            strength to stand on my own. Knowing that I have someone like you in
-            my corner has given me courage more times than you’ll ever know.
-          </p>
-
-          <p>
-            Thank you for always listening—not just hearing my words, but truly
-            listening with your heart. You have a remarkable way of making people
-            feel understood, valued, and never alone.
-          </p>
-
-          <p>
-            Thank you for caring so deeply, for your wisdom, and for every piece
-            of advice offered with love. Thank you for the laughter, the memories,
-            the late-night talks, the honest conversations, and the comfort of
-            knowing that you are always there.
-          </p>
-
-          <p><strong>Most of all, thank you for simply being you.</strong></p>
-
-          <p>
-            I hope you never forget how extraordinary you are. You are deeply
-            loved, endlessly appreciated, and treasured by so many people—
-            especially by me.
-          </p>
-
-          <p>
-            Happy Birthday, my beautiful friend. Never change who you are,
-            because the person you are is exactly the person this world needs.
-          </p>
-
-          <p class="signature">With all my love, always,<br><strong>Claudia</strong> ❤️</p>
-        </div>
-
       </div>
+
+      <div id="birthday-message-card" class="birthday-message-card reveal locked">
+        <div class="message-envelope" aria-hidden="true">✉</div>
+        <p class="vault-month">22 July 2026</p>
+        <h3 id="birthday-message-title">A Sealed Birthday Letter</h3>
+        <p id="birthday-message-status">
+          Your birthday message is safely sealed until your special day.
+        </p>
+        <button id="open-birthday-letter" class="button primary" type="button" disabled>
+          Locked until 22 July 2026
+        </button>
+      </div>
+    </section>
+
+
+    <section class="quote-strip">
+      <p>“Some people make the world more beautiful simply by being in it.”</p>
     </section>
 
 
@@ -183,6 +126,56 @@
         </article>
       </div>
     </section>
+    </div>
+
+
+    <section id="letter-admin" class="section letter-admin-section">
+      <details class="admin-details">
+        <summary>Letter Vault Admin</summary>
+        <div class="admin-panel">
+          <p class="eyebrow">Protected vault management</p>
+          <h2>Add or update a monthly letter</h2>
+          <p>
+            Upload a letter for a future month. It stays sealed on the public website until its opening date.
+            Desre receives an email telling her that a new letter has been added.
+          </p>
+
+          <form id="letter-upload-form" class="letter-upload-form">
+            <label>
+              Letter title
+              <input id="letter-title" type="text" maxlength="120" required placeholder="e.g. A Letter About Your Courage">
+            </label>
+            <label>
+              Opening date
+              <input id="letter-unlock-date" type="date" required>
+            </label>
+            <label>
+              Letter
+              <textarea id="letter-content" maxlength="6000" required placeholder="Write the letter here..."></textarea>
+            </label>
+            <label>
+              Upload PIN
+              <input id="letter-pin" type="password" inputmode="numeric" maxlength="4" required placeholder="Enter PIN">
+            </label>
+            <button class="button primary" type="submit">Save Letter and Notify Desre</button>
+            <p id="letter-upload-status" class="form-status" role="status"></p>
+          </form>
+        </div>
+      </details>
+    </section>
+
+    <section class="gallery-section section">
+      <div class="section-heading reveal">
+        <p class="eyebrow">Moments worth keeping</p>
+        <h2>A Few Favourite Memories</h2>
+      </div>
+      <div class="photo-grid">
+        <div class="photo-frame reveal"><img src="assets/memory-1.jpg" alt="A favourite memory with Desre" onerror="this.style.display='none'; this.parentElement.classList.add('photo-placeholder');"><span class="placeholder-copy">Memory photo 1</span></div>
+        <div class="photo-frame reveal"><img src="assets/memory-2.jpg" alt="A favourite memory with Desre" onerror="this.style.display='none'; this.parentElement.classList.add('photo-placeholder');"><span class="placeholder-copy">Memory photo 2</span></div>
+        <div class="photo-frame reveal"><img src="assets/memory-3.jpg" alt="A favourite memory with Desre" onerror="this.style.display='none'; this.parentElement.classList.add('photo-placeholder');"><span class="placeholder-copy">Memory photo 3</span></div>
+      </div>
+    </section>
+
 
 
     <section id="letter-vault" class="section vault-section">
@@ -194,239 +187,8 @@
         </p>
       </div>
 
-      <div class="vault-grid" id="vault-grid">
-        <article class="vault-card" data-unlock="2026-07-22T00:00:00+02:00">
-          <div class="vault-icon">✉</div>
-          <p class="vault-month">22 July 2026</p>
-          <h3>Your Birthday Letter</h3>
-          <div class="vault-sealed">This letter remains sealed until its opening date.</div>
-          <button class="vault-button" type="button">Locked</button>
-          <div class="vault-letter">
-            <h3>Happy Birthday, My Beautiful Friend</h3>
-            <p>
-              Today marks the beginning of this little letter journey—twelve months of reminders that you are loved,
-              appreciated, and treasured. On your birthday, I want you to know how grateful I am that life gave me a
-              friend like you.
-            </p>
-            <p>
-              May this year bring you peace, laughter, courage, beautiful surprises, and all the love you so freely give
-              to everyone around you.
-            </p>
-            <p class="signature">With all my love,<br><strong>Claudia</strong></p>
-          </div>
-        </article>
-
-        <article class="vault-card" data-unlock="2026-08-22T00:00:00+02:00">
-          <div class="vault-icon">✉</div>
-          <p class="vault-month">22 August 2026</p>
-          <h3>A Letter About Your Strength</h3>
-          <div class="vault-sealed">This letter remains sealed until its opening date.</div>
-          <button class="vault-button" type="button">Locked</button>
-          <div class="vault-letter">
-            <h3>Your Strength Inspires Me</h3>
-            <p>
-              Desre, your strength is not loud or demanding—it is steady, graceful, and deeply rooted. You keep going,
-              even when life is difficult, and you continue to love and care for others along the way.
-            </p>
-            <p>
-              I hope you always remember that being strong does not mean carrying everything alone. You have people who
-              love you and are ready to stand beside you, just as you have always stood beside them.
-            </p>
-            <p class="signature">Always in your corner,<br><strong>Claudia</strong></p>
-          </div>
-        </article>
-
-        <article class="vault-card" data-unlock="2026-09-22T00:00:00+02:00">
-          <div class="vault-icon">✉</div>
-          <p class="vault-month">22 September 2026</p>
-          <h3>A Letter About Your Kindness</h3>
-          <div class="vault-sealed">This letter remains sealed until its opening date.</div>
-          <button class="vault-button" type="button">Locked</button>
-          <div class="vault-letter">
-            <h3>Your Kindness Leaves a Mark</h3>
-            <p>
-              The way you care for people is one of your most beautiful qualities. You notice the small things, you
-              listen carefully, and you make people feel as though they truly matter.
-            </p>
-            <p>
-              Your kindness has made my life softer and brighter. Thank you for being someone whose heart always makes
-              room for others.
-            </p>
-            <p class="signature">With gratitude and love,<br><strong>Claudia</strong></p>
-          </div>
-        </article>
-
-        <article class="vault-card" data-unlock="2026-10-22T00:00:00+02:00">
-          <div class="vault-icon">✉</div>
-          <p class="vault-month">22 October 2026</p>
-          <h3>A Letter About Our Memories</h3>
-          <div class="vault-sealed">This letter remains sealed until its opening date.</div>
-          <button class="vault-button" type="button">Locked</button>
-          <div class="vault-letter">
-            <h3>For Every Memory We Share</h3>
-            <p>
-              Some of my favourite memories are not grand events—they are the ordinary moments made special because you
-              were there. The conversations, laughter, advice, and quiet understanding are treasures I carry with me.
-            </p>
-            <p>
-              Thank you for every chapter we have already written and for all the beautiful memories still waiting for us.
-            </p>
-            <p class="signature">Here is to many more,<br><strong>Claudia</strong></p>
-          </div>
-        </article>
-
-        <article class="vault-card" data-unlock="2026-11-22T00:00:00+02:00">
-          <div class="vault-icon">✉</div>
-          <p class="vault-month">22 November 2026</p>
-          <h3>A Letter About Gratitude</h3>
-          <div class="vault-sealed">This letter remains sealed until its opening date.</div>
-          <button class="vault-button" type="button">Locked</button>
-          <div class="vault-letter">
-            <h3>I Am So Grateful for You</h3>
-            <p>
-              This month I simply want to say thank you. Thank you for your unwavering friendship, for always having my
-              back, and for showing up with love and honesty.
-            </p>
-            <p>
-              My life is better because you are part of it, and I never want to take that blessing for granted.
-            </p>
-            <p class="signature">Grateful for you always,<br><strong>Claudia</strong></p>
-          </div>
-        </article>
-
-        <article class="vault-card" data-unlock="2026-12-22T00:00:00+02:00">
-          <div class="vault-icon">✉</div>
-          <p class="vault-month">22 December 2026</p>
-          <h3>A Christmas Letter</h3>
-          <div class="vault-sealed">This letter remains sealed until its opening date.</div>
-          <button class="vault-button" type="button">Locked</button>
-          <div class="vault-letter">
-            <h3>A Christmas Wish for You</h3>
-            <p>
-              At this beautiful time of year, I hope your heart is filled with peace and your home with laughter. May you
-              be surrounded by the people who cherish you and reminded of how deeply loved you are.
-            </p>
-            <p>
-              You are one of the greatest gifts in my life, and I am thankful for you this Christmas and always.
-            </p>
-            <p class="signature">With festive love,<br><strong>Claudia</strong></p>
-          </div>
-        </article>
-
-        <article class="vault-card" data-unlock="2027-01-22T00:00:00+02:00">
-          <div class="vault-icon">✉</div>
-          <p class="vault-month">22 January 2027</p>
-          <h3>A Letter for New Beginnings</h3>
-          <div class="vault-sealed">This letter remains sealed until its opening date.</div>
-          <button class="vault-button" type="button">Locked</button>
-          <div class="vault-letter">
-            <h3>Create Your Life</h3>
-            <p>
-              A new year is a fresh page, and I hope you fill yours with courage, joy, adventure, and everything that
-              makes your heart feel alive.
-            </p>
-            <p>
-              Never be afraid to choose yourself, to dream again, and to create a life that feels true to who you are.
-            </p>
-            <p class="signature">Believing in you always,<br><strong>Claudia</strong></p>
-          </div>
-        </article>
-
-        <article class="vault-card" data-unlock="2027-02-22T00:00:00+02:00">
-          <div class="vault-icon">✉</div>
-          <p class="vault-month">22 February 2027</p>
-          <h3>A Letter About Love</h3>
-          <div class="vault-sealed">This letter remains sealed until its opening date.</div>
-          <button class="vault-button" type="button">Locked</button>
-          <div class="vault-letter">
-            <h3>You Are Deeply Loved</h3>
-            <p>
-              You give love so generously—to your family, your friends, and everyone fortunate enough to know you. I hope
-              you never doubt that this love surrounds you too.
-            </p>
-            <p>
-              You deserve tenderness, patience, loyalty, and all the beautiful things your heart gives so freely.
-            </p>
-            <p class="signature">With a full heart,<br><strong>Claudia</strong></p>
-          </div>
-        </article>
-
-        <article class="vault-card" data-unlock="2027-03-22T00:00:00+02:00">
-          <div class="vault-icon">✉</div>
-          <p class="vault-month">22 March 2027</p>
-          <h3>A Letter About Your Light</h3>
-          <div class="vault-sealed">This letter remains sealed until its opening date.</div>
-          <button class="vault-button" type="button">Locked</button>
-          <div class="vault-letter">
-            <h3>Never Dim Your Light</h3>
-            <p>
-              You have a light that cannot be manufactured—it comes from your heart. It is in your laughter, your care,
-              your honesty, and your ability to make people feel safe.
-            </p>
-            <p>
-              Never shrink yourself to make the world comfortable. The world needs your light exactly as it is.
-            </p>
-            <p class="signature">Keep shining,<br><strong>Claudia</strong></p>
-          </div>
-        </article>
-
-        <article class="vault-card" data-unlock="2027-04-22T00:00:00+02:00">
-          <div class="vault-icon">✉</div>
-          <p class="vault-month">22 April 2027</p>
-          <h3>A Letter About Friendship</h3>
-          <div class="vault-sealed">This letter remains sealed until its opening date.</div>
-          <button class="vault-button" type="button">Locked</button>
-          <div class="vault-letter">
-            <h3>A Friend Like You Is Rare</h3>
-            <p>
-              True friendship is being known, understood, and accepted—and that is what your friendship has given me.
-              You have listened without judgement, advised with love, and stood beside me without hesitation.
-            </p>
-            <p>
-              I am proud and grateful to call you my friend.
-            </p>
-            <p class="signature">Your friend, always,<br><strong>Claudia</strong></p>
-          </div>
-        </article>
-
-        <article class="vault-card" data-unlock="2027-05-22T00:00:00+02:00">
-          <div class="vault-icon">✉</div>
-          <p class="vault-month">22 May 2027</p>
-          <h3>A Letter About Being You</h3>
-          <div class="vault-sealed">This letter remains sealed until its opening date.</div>
-          <button class="vault-button" type="button">Locked</button>
-          <div class="vault-letter">
-            <h3>Thank You for Just Being You</h3>
-            <p>
-              You do not have to prove your worth or earn your place in the hearts of those who love you. You are enough
-              simply because you are you.
-            </p>
-            <p>
-              Thank you for your honesty, your humour, your softness, your strength, and every wonderful part of the
-              person you are.
-            </p>
-            <p class="signature">Never change,<br><strong>Claudia</strong></p>
-          </div>
-        </article>
-
-        <article class="vault-card" data-unlock="2027-06-22T00:00:00+02:00">
-          <div class="vault-icon">✉</div>
-          <p class="vault-month">22 June 2027</p>
-          <h3>A Letter Before Your Birthday</h3>
-          <div class="vault-sealed">This letter remains sealed until its opening date.</div>
-          <button class="vault-button" type="button">Locked</button>
-          <div class="vault-letter">
-            <h3>Almost Another Beautiful Year</h3>
-            <p>
-              As your next birthday draws near, I hope you look back and see how much you have grown, how much you have
-              overcome, and how many lives you have touched.
-            </p>
-            <p>
-              This year of letters may be coming to an end, but the reasons you are precious are endless.
-            </p>
-            <p class="signature">With love that does not expire,<br><strong>Claudia</strong></p>
-          </div>
-        </article>
+      <div id="vault-timeline" class="vault-timeline" aria-live="polite">
+        <div class="vault-loading">Checking the vault for letters…</div>
       </div>
     </section>
 
@@ -437,15 +199,16 @@
       </div>
     </div>
 
-    <section class="gallery-section section">
+    <section id="memory-photos" class="section uploaded-gallery-section">
       <div class="section-heading reveal">
-        <p class="eyebrow">Moments worth keeping</p>
-        <h2>A Few Favourite Memories</h2>
+        <p class="eyebrow">Photographs added with love</p>
+        <h2>Our Memory Photos</h2>
+        <p>
+          Every photograph uploaded to the Memory Wall is safely stored and will remain here as part of Desre’s collection.
+        </p>
       </div>
-      <div class="photo-grid">
-        <div class="photo-frame reveal"><img src="assets/memory-1.jpg" alt="A favourite memory with Desre" onerror="this.style.display='none'; this.parentElement.classList.add('photo-placeholder');"><span class="placeholder-copy">Memory photo 1</span></div>
-        <div class="photo-frame reveal"><img src="assets/memory-2.jpg" alt="A favourite memory with Desre" onerror="this.style.display='none'; this.parentElement.classList.add('photo-placeholder');"><span class="placeholder-copy">Memory photo 2</span></div>
-        <div class="photo-frame reveal"><img src="assets/memory-3.jpg" alt="A favourite memory with Desre" onerror="this.style.display='none'; this.parentElement.classList.add('photo-placeholder');"><span class="placeholder-copy">Memory photo 3</span></div>
+      <div id="uploaded-photo-gallery" class="uploaded-photo-gallery">
+        <p id="gallery-empty" class="gallery-empty">No shared photographs have been added yet.</p>
       </div>
     </section>
 
@@ -474,6 +237,12 @@
             <small>Optional. Please use a clear image smaller than 5 MB.</small>
           </label>
 
+          <label>
+            Upload PIN
+            <input id="memory-pin" type="password" inputmode="numeric" maxlength="4" required placeholder="Enter the 4-digit PIN">
+            <small>The PIN protects the wall from random public uploads.</small>
+          </label>
+
           <button class="button primary" type="submit">Add to the Memory Wall</button>
           <p id="form-status" class="form-status" role="status"></p>
         </form>
@@ -482,7 +251,7 @@
           <div id="memory-wall" class="memory-wall" aria-live="polite">
           </div>
           <p id="firebase-note" class="setup-note">
-            The shared memory wall becomes active after the Firebase details are added.
+            Photos and messages are saved permanently in Desre’s private Supabase memory collection.
           </p>
         </div>
       </div>
@@ -505,13 +274,6 @@
   <footer>
     <p>Created with love for Desre by Claudia • 22 July 2026</p>
   </footer>
-
-
-  <div id="birthday-letter-modal" class="modal" aria-hidden="true">
-    <div class="modal-card vault-modal-card">
-      <button id="close-birthday-letter" class="modal-close" aria-label="Close birthday letter">×</button>
-      <div id="birthday-letter-modal-content"></div>
-    </div>
   </div>
 
   <div id="birthday-modal" class="modal" aria-hidden="true">
@@ -524,6 +286,31 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script type="module" src="script.js"></script>
+
+  <div id="birthday-surprise" class="birthday-surprise" aria-hidden="true">
+    <div class="birthday-surprise-inner">
+      <button id="close-surprise" class="surprise-close" aria-label="Close birthday surprise">×</button>
+      <p class="surprise-kicker">Today is your day</p>
+      <h2>Happy Birthday, Desre!</h2>
+      <p>
+        May your day be filled with love, laughter, beautiful memories, and every reminder of how precious you are.
+      </p>
+      <button id="surprise-open-letter" class="button light" type="button">Open Your Birthday Letter</button>
+    </div>
+    <div class="floating-petal petal-one">✦</div>
+    <div class="floating-petal petal-two">✿</div>
+    <div class="floating-petal petal-three">✦</div>
+    <div class="floating-petal petal-four">❀</div>
+  </div>
+
+
+  <div id="photo-lightbox" class="photo-lightbox" aria-hidden="true">
+    <button id="close-photo-lightbox" class="photo-lightbox-close" aria-label="Close photograph">×</button>
+    <img id="photo-lightbox-image" alt="">
+    <p id="photo-lightbox-caption"></p>
+  </div>
+
 </body>
 </html>

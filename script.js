@@ -1,5 +1,3 @@
-import { firebaseConfig } from "./firebase-config.js";
-
 const birthday = new Date("2026-07-22T00:00:00+02:00");
 const countdown = document.getElementById("countdown");
 const daysEl = document.getElementById("days");
@@ -70,198 +68,381 @@ celebrateButton.addEventListener("click", openModal);
 closeModal.addEventListener("click", hideModal);
 modal.addEventListener("click", event => { if (event.target === modal) hideModal(); });
 
-const isConfigured = !Object.values(firebaseConfig).some(value => value.includes("PASTE_YOUR"));
-const form = document.getElementById("memory-form");
-const wall = document.getElementById("memory-wall");
-const status = document.getElementById("form-status");
-const setupNote = document.getElementById("firebase-note");
-
-function escapeHtml(value = "") {
-  return value.replace(/[&<>"']/g, char => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
-  }[char]));
-}
-
-function renderMemory(memory) {
-  const card = document.createElement("article");
-  card.className = "memory-card";
-  const image = memory.photoUrl ? `<img src="${escapeHtml(memory.photoUrl)}" alt="Photograph shared by ${escapeHtml(memory.name)}">` : "";
-  const date = memory.createdAt?.toDate ? memory.createdAt.toDate() : new Date(memory.createdAt || Date.now());
-
-  card.innerHTML = `
-    ${image}
-    <p class="memory-message">${escapeHtml(memory.message)}</p>
-    <p class="memory-author">— ${escapeHtml(memory.name)}</p>
-    <p class="memory-date">${date.toLocaleDateString("en-ZA", { day: "numeric", month: "long", year: "numeric" })}</p>
-  `;
-  wall.appendChild(card);
-}
-
-if (!isConfigured) {
-  setupNote.style.display = "block";
-  form.addEventListener("submit", event => {
-    event.preventDefault();
-    status.textContent = "Firebase still needs to be connected before memories can be shared between visitors.";
-  });
-} else {
-  setupNote.style.display = "none";
-
-  const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js");
-  const { getFirestore, collection, addDoc, onSnapshot, orderBy, query, serverTimestamp } =
-    await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js");
-  const { getStorage, ref, uploadBytes, getDownloadURL } =
-    await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js");
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const storage = getStorage(app);
-  const memoriesRef = collection(db, "memories");
-
-  onSnapshot(query(memoriesRef, orderBy("createdAt", "desc")), snapshot => {
-    wall.querySelectorAll(".memory-card:not(.featured)").forEach(card => card.remove());
-    snapshot.forEach(document => renderMemory(document.data()));
-  }, error => {
-    console.error(error);
-    setupNote.style.display = "block";
-    setupNote.textContent = "The memory wall could not be loaded. Please check the Firebase security rules.";
-  });
-
-  form.addEventListener("submit", async event => {
-    event.preventDefault();
-    status.textContent = "Adding your memory...";
-    const submitButton = form.querySelector("button");
-    submitButton.disabled = true;
-
-    try {
-      const name = document.getElementById("memory-name").value.trim();
-      const message = document.getElementById("memory-message").value.trim();
-      const file = document.getElementById("memory-photo").files[0];
-      let photoUrl = "";
-
-      if (file) {
-        if (file.size > 5 * 1024 * 1024) throw new Error("Please choose an image smaller than 5 MB.");
-        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-        const photoRef = ref(storage, `memory-photos/${Date.now()}-${safeName}`);
-        await uploadBytes(photoRef, file);
-        photoUrl = await getDownloadURL(photoRef);
-      }
-
-      await addDoc(memoriesRef, {
-        name,
-        message,
-        photoUrl,
-        createdAt: serverTimestamp()
-      });
-
-      form.reset();
-      status.textContent = "Your memory has been added with love.";
-      launchConfetti();
-    } catch (error) {
-      console.error(error);
-      status.textContent = error.message || "Something went wrong. Please try again.";
-    } finally {
-      submitButton.disabled = false;
-    }
-  });
-}
 
 
-const vaultCards = document.querySelectorAll(".vault-card");
+
+const SUPABASE_URL = "https://fkmssqbzfsqqonoghmmz.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_nWTkmo1OOY4Y32WZdhdKMw_ZkKaLWO8";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+const birthdayUnlockDate = new Date("2026-07-22T00:00:00+02:00");
+const birthdayEndDate = new Date("2026-07-23T00:00:00+02:00");
+
+const memoryForm = document.getElementById("memory-form");
+const memoryWall = document.getElementById("memory-wall");
+const memoryStatus = document.getElementById("form-status");
+const uploadedGallery = document.getElementById("uploaded-photo-gallery");
+const galleryEmpty = document.getElementById("gallery-empty");
+
+const vaultTimeline = document.getElementById("vault-timeline");
 const vaultModal = document.getElementById("vault-modal");
 const vaultModalContent = document.getElementById("vault-modal-content");
 const closeVaultModalButton = document.getElementById("close-vault-modal");
 
-function formatUnlockDate(date) {
-  return date.toLocaleDateString("en-ZA", {
+const birthdayCard = document.getElementById("birthday-message-card");
+const birthdayTitle = document.getElementById("birthday-message-title");
+const birthdayStatus = document.getElementById("birthday-message-status");
+const birthdayButton = document.getElementById("open-birthday-letter");
+const birthdaySubtext = document.getElementById("birthday-message-subtext");
+
+const birthdaySurprise = document.getElementById("birthday-surprise");
+const closeSurpriseButton = document.getElementById("close-surprise");
+const surpriseOpenLetterButton = document.getElementById("surprise-open-letter");
+
+const photoLightbox = document.getElementById("photo-lightbox");
+const photoLightboxImage = document.getElementById("photo-lightbox-image");
+const photoLightboxCaption = document.getElementById("photo-lightbox-caption");
+const closePhotoLightboxButton = document.getElementById("close-photo-lightbox");
+
+const letterForm = document.getElementById("letter-upload-form");
+const letterUploadStatus = document.getElementById("letter-upload-status");
+
+let loadedLetters = [];
+let birthdayLetter = null;
+
+function escapeHtml(value = "") {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+  }[char]));
+}
+
+function formatDate(dateValue) {
+  return new Date(dateValue).toLocaleDateString("en-ZA", {
     day: "numeric",
     month: "long",
-    year: "numeric"
+    year: "numeric",
+    timeZone: "Africa/Johannesburg"
   });
 }
 
-function updateVaultStatus() {
+function isBirthdayToday() {
   const now = new Date();
-
-  vaultCards.forEach(card => {
-    const unlockDate = new Date(card.dataset.unlock);
-    const button = card.querySelector(".vault-button");
-    const unlocked = now >= unlockDate;
-
-    card.classList.toggle("unlocked", unlocked);
-    card.classList.toggle("locked", !unlocked);
-
-    if (unlocked) {
-      button.textContent = "Open Letter";
-      button.disabled = false;
-      button.title = "Open this month's letter";
-    } else {
-      button.textContent = `Locked until ${formatUnlockDate(unlockDate)}`;
-      button.disabled = true;
-      button.title = `This letter unlocks on ${formatUnlockDate(unlockDate)}`;
-    }
-  });
+  return now >= birthdayUnlockDate && now < birthdayEndDate;
 }
 
-vaultCards.forEach(card => {
-  const button = card.querySelector(".vault-button");
-  button.addEventListener("click", () => {
-    if (card.classList.contains("locked")) return;
+function isUnlocked(dateValue) {
+  return new Date() >= new Date(dateValue);
+}
 
-    const letter = card.querySelector(".vault-letter");
-    vaultModalContent.innerHTML = letter.innerHTML;
-    vaultModal.classList.add("open");
-    vaultModal.setAttribute("aria-hidden", "false");
-  });
-});
+function letterHtml(letter) {
+  const paragraphs = escapeHtml(letter.content || "")
+    .split(/\n{2,}/)
+    .map(paragraph => `<p>${paragraph.replace(/\n/g, "<br>")}</p>`)
+    .join("");
+
+  return `
+    <p class="eyebrow">${formatDate(letter.unlock_date)}</p>
+    <h3>${escapeHtml(letter.title)}</h3>
+    ${paragraphs}
+    <p class="signature">With all my love,<br><strong>Claudia</strong> ❤️</p>
+  `;
+}
+
+function openLetter(letter) {
+  if (!letter || !isUnlocked(letter.unlock_date)) return;
+  vaultModalContent.innerHTML = letterHtml(letter);
+  vaultModal.classList.add("open");
+  vaultModal.setAttribute("aria-hidden", "false");
+}
 
 function closeVaultModal() {
   vaultModal.classList.remove("open");
   vaultModal.setAttribute("aria-hidden", "true");
 }
 
-closeVaultModalButton.addEventListener("click", closeVaultModal);
-vaultModal.addEventListener("click", event => {
+closeVaultModalButton?.addEventListener("click", closeVaultModal);
+vaultModal?.addEventListener("click", event => {
   if (event.target === vaultModal) closeVaultModal();
 });
 
-updateVaultStatus();
-setInterval(updateVaultStatus, 60000);
+function renderVault() {
+  const monthlyLetters = loadedLetters.filter(letter => {
+    const d = new Date(letter.unlock_date);
+    return !(d.getFullYear() === 2026 && d.getMonth() === 6 && d.getDate() === 22);
+  });
 
+  if (!monthlyLetters.length) {
+    vaultTimeline.innerHTML = `
+      <div class="vault-empty">
+        <div class="vault-empty-icon">✉</div>
+        <h3>The vault is waiting</h3>
+        <p>New monthly letters will appear here as Claudia adds them.</p>
+      </div>`;
+    return;
+  }
 
-const birthdayLetterButton = document.getElementById("open-birthday-letter");
-const birthdayLetterModal = document.getElementById("birthday-letter-modal");
-const birthdayLetterModalContent = document.getElementById("birthday-letter-modal-content");
-const birthdayLetterSource = document.getElementById("birthday-letter-content");
-const closeBirthdayLetterButton = document.getElementById("close-birthday-letter");
+  vaultTimeline.innerHTML = monthlyLetters.map(letter => {
+    const unlocked = isUnlocked(letter.unlock_date);
+    return `
+      <article class="timeline-letter ${unlocked ? "unlocked" : "locked"}" data-letter-id="${letter.id}">
+        <div class="timeline-dot">${unlocked ? "✓" : "🔒"}</div>
+        <div class="timeline-content">
+          <p class="vault-month">${formatDate(letter.unlock_date)}</p>
+          <h3>${unlocked ? escapeHtml(letter.title) : "A Sealed Letter"}</h3>
+          <p>${unlocked ? "This letter is ready for you." : "This letter remains sealed until its opening date."}</p>
+          <button class="vault-button" type="button" ${unlocked ? "" : "disabled"}>
+            ${unlocked ? "Open Letter" : `Locked until ${formatDate(letter.unlock_date)}`}
+          </button>
+        </div>
+      </article>`;
+  }).join("");
 
-function openBirthdayLetter() {
-  birthdayLetterModalContent.innerHTML = birthdayLetterSource.innerHTML;
-  birthdayLetterModal.classList.add("open");
-  birthdayLetterModal.setAttribute("aria-hidden", "false");
+  vaultTimeline.querySelectorAll(".timeline-letter.unlocked").forEach(card => {
+    card.querySelector("button")?.addEventListener("click", () => {
+      const letter = loadedLetters.find(item => item.id === card.dataset.letterId);
+      openLetter(letter);
+    });
+  });
 }
 
-function closeBirthdayLetter() {
-  birthdayLetterModal.classList.remove("open");
-  birthdayLetterModal.setAttribute("aria-hidden", "true");
+function updateBirthdayLetter() {
+  const now = new Date();
+  const unlocked = now >= birthdayUnlockDate;
+  birthdayLetter = loadedLetters.find(letter => {
+    const d = new Date(letter.unlock_date);
+    return d.getFullYear() === 2026 && d.getMonth() === 6 && d.getDate() === 22;
+  }) || null;
+
+  birthdayCard.classList.toggle("locked", !unlocked);
+  birthdayCard.classList.toggle("unlocked", unlocked);
+
+  if (!unlocked) {
+    birthdayTitle.textContent = "A Sealed Birthday Letter";
+    birthdayStatus.textContent = "Your birthday message is safely sealed until your special day.";
+    birthdayButton.disabled = true;
+    birthdayButton.textContent = "Locked until 22 July 2026";
+    birthdaySubtext.textContent = "This special letter will unlock on 22 July 2026.";
+    return;
+  }
+
+  if (!birthdayLetter) {
+    birthdayTitle.textContent = "Your Birthday Letter";
+    birthdayStatus.textContent = "Your letter has not been added yet.";
+    birthdayButton.disabled = true;
+    birthdayButton.textContent = "Letter Coming Soon";
+    return;
+  }
+
+  birthdayTitle.textContent = birthdayLetter.title;
+  birthdayStatus.textContent = "Your birthday message is ready to open.";
+  birthdayButton.disabled = false;
+  birthdayButton.textContent = "Open My Birthday Message";
+  birthdaySubtext.textContent = "Your special birthday letter is ready.";
 }
 
-birthdayLetterButton.addEventListener("click", openBirthdayLetter);
-closeBirthdayLetterButton.addEventListener("click", closeBirthdayLetter);
-birthdayLetterModal.addEventListener("click", event => {
-  if (event.target === birthdayLetterModal) closeBirthdayLetter();
+birthdayButton?.addEventListener("click", () => openLetter(birthdayLetter));
+surpriseOpenLetterButton?.addEventListener("click", () => {
+  birthdaySurprise.classList.remove("open");
+  openLetter(birthdayLetter);
 });
 
-const celebrateLockNote = document.getElementById("celebrate-lock-note");
-
-function updateBirthdayOnlyFeatures() {
-  const now = new Date();
-  const birthdayStart = new Date("2026-07-22T00:00:00+02:00");
-  const birthdayEnd = new Date("2026-07-23T00:00:00+02:00");
-  const isBirthday = now >= birthdayStart && now < birthdayEnd;
-
-  celebrateButton.hidden = !isBirthday;
-  celebrateLockNote.hidden = isBirthday;
+function showBirthdaySurprise() {
+  if (!isBirthdayToday()) return;
+  const storageKey = "desreBirthdaySurpriseSeen-2026";
+  if (sessionStorage.getItem(storageKey)) return;
+  sessionStorage.setItem(storageKey, "yes");
+  birthdaySurprise.classList.add("open");
+  birthdaySurprise.setAttribute("aria-hidden", "false");
+  if (typeof launchConfetti === "function") launchConfetti();
 }
 
-updateBirthdayOnlyFeatures();
-setInterval(updateBirthdayOnlyFeatures, 60000);
+closeSurpriseButton?.addEventListener("click", () => {
+  birthdaySurprise.classList.remove("open");
+  birthdaySurprise.setAttribute("aria-hidden", "true");
+});
+
+async function loadLetters() {
+  const { data, error } = await supabaseClient
+    .from("letters")
+    .select("id,title,content,unlock_date,created_at")
+    .order("unlock_date", { ascending: true });
+
+  if (error) {
+    console.error("Could not load letters:", error);
+    vaultTimeline.innerHTML = `
+      <div class="vault-empty">
+        <h3>The vault could not be opened</h3>
+        <p>Please check the Supabase setup.</p>
+      </div>`;
+    return;
+  }
+
+  loadedLetters = data || [];
+  renderVault();
+  updateBirthdayLetter();
+  showBirthdaySurprise();
+}
+
+function openPhotoLightbox(src, caption) {
+  photoLightboxImage.src = src;
+  photoLightboxImage.alt = caption || "Memory photograph";
+  photoLightboxCaption.textContent = caption || "";
+  photoLightbox.classList.add("open");
+  photoLightbox.setAttribute("aria-hidden", "false");
+}
+
+function closePhotoLightbox() {
+  photoLightbox.classList.remove("open");
+  photoLightbox.setAttribute("aria-hidden", "true");
+  photoLightboxImage.src = "";
+}
+
+closePhotoLightboxButton?.addEventListener("click", closePhotoLightbox);
+photoLightbox?.addEventListener("click", event => {
+  if (event.target === photoLightbox) closePhotoLightbox();
+});
+
+function renderMemory(memory) {
+  const card = document.createElement("article");
+  card.className = "memory-card";
+  const date = new Date(memory.created_at || Date.now());
+  const safeName = escapeHtml(memory.name);
+  const safeMessage = escapeHtml(memory.message || "");
+
+  card.innerHTML = `
+    ${memory.photo_url ? `<button class="memory-photo-button" type="button"><img src="${escapeHtml(memory.photo_url)}" alt="Photograph shared by ${safeName}" loading="lazy"></button>` : ""}
+    ${safeMessage ? `<p class="memory-message">${safeMessage}</p>` : ""}
+    <p class="memory-author">— ${safeName}</p>
+    <p class="memory-date">${date.toLocaleDateString("en-ZA", { day: "numeric", month: "long", year: "numeric" })}</p>
+  `;
+  memoryWall.appendChild(card);
+
+  if (memory.photo_url) {
+    const photoCard = document.createElement("article");
+    photoCard.className = "uploaded-photo-card";
+    const caption = `${memory.name}${memory.message ? ` — ${memory.message}` : ""}`;
+    photoCard.innerHTML = `
+      <button class="uploaded-photo-button" type="button">
+        <img src="${escapeHtml(memory.photo_url)}" alt="Memory photograph shared by ${safeName}" loading="lazy">
+        <span class="uploaded-photo-caption">${escapeHtml(caption)}</span>
+      </button>
+    `;
+    photoCard.querySelector("button").addEventListener("click", () => openPhotoLightbox(memory.photo_url, caption));
+    uploadedGallery.appendChild(photoCard);
+  }
+
+  card.querySelector(".memory-photo-button")?.addEventListener("click", () => {
+    openPhotoLightbox(memory.photo_url, `${memory.name}${memory.message ? ` — ${memory.message}` : ""}`);
+  });
+}
+
+async function loadMemories() {
+  const { data, error } = await supabaseClient
+    .from("memories")
+    .select("id,name,message,photo_url,created_at")
+    .eq("approved", true)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error(error);
+    memoryStatus.textContent = "The permanent memory collection could not be loaded.";
+    return;
+  }
+
+  memoryWall.innerHTML = "";
+  uploadedGallery.querySelectorAll(".uploaded-photo-card").forEach(card => card.remove());
+
+  const items = data || [];
+  galleryEmpty.style.display = items.some(item => item.photo_url) ? "none" : "block";
+  items.forEach(renderMemory);
+}
+
+memoryForm?.addEventListener("submit", async event => {
+  event.preventDefault();
+  const submitButton = memoryForm.querySelector("button[type='submit']");
+  const photo = document.getElementById("memory-photo").files[0];
+
+  if (photo && photo.size > 5 * 1024 * 1024) {
+    memoryStatus.textContent = "Please choose a photograph smaller than 5 MB.";
+    return;
+  }
+
+  submitButton.disabled = true;
+  memoryStatus.textContent = "Saving this memory permanently…";
+
+  try {
+    const payload = new FormData();
+    payload.append("name", document.getElementById("memory-name").value.trim());
+    payload.append("message", document.getElementById("memory-message").value.trim());
+    payload.append("pin", document.getElementById("memory-pin").value.trim());
+    if (photo) payload.append("photo", photo);
+
+    const response = await fetch(`${SUPABASE_URL}/functions/v1/upload-memory`, {
+      method: "POST",
+      headers: {
+        apikey: SUPABASE_PUBLISHABLE_KEY,
+        Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`
+      },
+      body: payload
+    });
+
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "The memory could not be saved.");
+
+    memoryForm.reset();
+    memoryStatus.textContent = "Your memory and photograph have been saved permanently.";
+    if (typeof launchConfetti === "function") launchConfetti();
+    await loadMemories();
+  } catch (error) {
+    console.error(error);
+    memoryStatus.textContent = error.message || "Something went wrong. Please try again.";
+  } finally {
+    submitButton.disabled = false;
+  }
+});
+
+letterForm?.addEventListener("submit", async event => {
+  event.preventDefault();
+  const button = letterForm.querySelector("button[type='submit']");
+  button.disabled = true;
+  letterUploadStatus.textContent = "Saving and sealing the letter…";
+
+  try {
+    const unlockDateValue = document.getElementById("letter-unlock-date").value;
+    const response = await fetch(`${SUPABASE_URL}/functions/v1/upload-letter`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: SUPABASE_PUBLISHABLE_KEY,
+        Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`
+      },
+      body: JSON.stringify({
+        title: document.getElementById("letter-title").value.trim(),
+        content: document.getElementById("letter-content").value.trim(),
+        unlock_date: `${unlockDateValue}T00:00:00+02:00`,
+        pin: document.getElementById("letter-pin").value.trim()
+      })
+    });
+
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "The letter could not be saved.");
+
+    letterForm.reset();
+    letterUploadStatus.textContent = result.emailed
+      ? "The letter is sealed and Desre has been emailed."
+      : (result.warning || "The letter is sealed in the vault.");
+    await loadLetters();
+  } catch (error) {
+    console.error(error);
+    letterUploadStatus.textContent = error.message || "Something went wrong. Please try again.";
+  } finally {
+    button.disabled = false;
+  }
+});
+
+loadMemories();
+loadLetters();
+setInterval(() => {
+  renderVault();
+  updateBirthdayLetter();
+}, 60000);
