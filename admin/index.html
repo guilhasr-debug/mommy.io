@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desre Letter Vault Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body class="admin-page-body">
+  <main class="admin-page-shell">
+    <a href="../" class="admin-back-link">← Back to Desre's website</a>
+
+    <section class="admin-page-card">
+      <p class="eyebrow">Protected vault management</p>
+      <h1>Letter Vault Admin</h1>
+      <p>
+        Add or update a monthly letter. The letter remains sealed until its opening date,
+        and Desre receives an email notification when it is added.
+      </p>
+
+      <form id="letter-upload-form" class="letter-upload-form">
+        <label>
+          Letter title
+          <input id="letter-title" type="text" maxlength="120" required placeholder="e.g. A Letter About Your Courage">
+        </label>
+
+        <label>
+          Opening date
+          <input id="letter-unlock-date" type="date" required>
+        </label>
+
+        <label>
+          Letter
+          <textarea id="letter-content" maxlength="6000" required placeholder="Write the letter here..."></textarea>
+        </label>
+
+        <label>
+          Upload PIN
+          <input id="letter-pin" type="password" inputmode="numeric" maxlength="4" required placeholder="Enter PIN">
+        </label>
+
+        <button class="button primary" type="submit">Save Letter and Notify Desre</button>
+        <p id="letter-upload-status" class="form-status" role="status"></p>
+      </form>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="admin.js"></script>
+</body>
+</html>

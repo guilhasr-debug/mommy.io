@@ -29,11 +29,8 @@
     <section id="home" class="hero section">
       <div class="hero-copy reveal">
         <p class="eyebrow">Counting down to 22 July 2026</p>
-        <h1>Celebrating the beautiful soul that is <span>Desre</span></h1>
-        <p class="hero-intro">
-          A little corner of the internet created with love, memories, laughter,
-          and all the reasons you mean so much to the people around you.
-        </p>
+        <h1>Desre</h1>
+        <p class="hero-intro">If I had to describe Des in just a few words, I couldn't—because she is so much more than words can capture. She is witty, funny, beautiful, loving, caring, honest, loyal, trustworthy, and wonderfully unique. She has an incredible way of making people feel valued, supported, and loved. She celebrates your victories, carries you through your struggles, and never lets you face life alone. She truly is everything anyone could ever wish for in a friend, and I feel incredibly blessed to call her mine.</p>
         <p class="monthly-promise">
           Every month, something new. Every letter, another reason to remind you how precious you are.
         </p>
@@ -129,54 +126,6 @@
     </div>
 
 
-    <section id="letter-admin" class="section letter-admin-section">
-      <details class="admin-details">
-        <summary>Letter Vault Admin</summary>
-        <div class="admin-panel">
-          <p class="eyebrow">Protected vault management</p>
-          <h2>Add or update a monthly letter</h2>
-          <p>
-            Upload a letter for a future month. It stays sealed on the public website until its opening date.
-            Desre receives an email telling her that a new letter has been added.
-          </p>
-
-          <form id="letter-upload-form" class="letter-upload-form">
-            <label>
-              Letter title
-              <input id="letter-title" type="text" maxlength="120" required placeholder="e.g. A Letter About Your Courage">
-            </label>
-            <label>
-              Opening date
-              <input id="letter-unlock-date" type="date" required>
-            </label>
-            <label>
-              Letter
-              <textarea id="letter-content" maxlength="6000" required placeholder="Write the letter here..."></textarea>
-            </label>
-            <label>
-              Upload PIN
-              <input id="letter-pin" type="password" inputmode="numeric" maxlength="4" required placeholder="Enter PIN">
-            </label>
-            <button class="button primary" type="submit">Save Letter and Notify Desre</button>
-            <p id="letter-upload-status" class="form-status" role="status"></p>
-          </form>
-        </div>
-      </details>
-    </section>
-
-    <section class="gallery-section section">
-      <div class="section-heading reveal">
-        <p class="eyebrow">Moments worth keeping</p>
-        <h2>A Few Favourite Memories</h2>
-      </div>
-      <div class="photo-grid">
-        <div class="photo-frame reveal"><img src="assets/memory-1.jpg" alt="A favourite memory with Desre" onerror="this.style.display='none'; this.parentElement.classList.add('photo-placeholder');"><span class="placeholder-copy">Memory photo 1</span></div>
-        <div class="photo-frame reveal"><img src="assets/memory-2.jpg" alt="A favourite memory with Desre" onerror="this.style.display='none'; this.parentElement.classList.add('photo-placeholder');"><span class="placeholder-copy">Memory photo 2</span></div>
-        <div class="photo-frame reveal"><img src="assets/memory-3.jpg" alt="A favourite memory with Desre" onerror="this.style.display='none'; this.parentElement.classList.add('photo-placeholder');"><span class="placeholder-copy">Memory photo 3</span></div>
-      </div>
-    </section>
-
-
 
     <section id="letter-vault" class="section vault-section">
       <div class="section-heading reveal">
@@ -210,51 +159,41 @@
       <div id="uploaded-photo-gallery" class="uploaded-photo-gallery">
         <p id="gallery-empty" class="gallery-empty">No shared photographs have been added yet.</p>
       </div>
-    </section>
 
-    <section id="memories" class="section memories-section">
-      <div class="section-heading reveal">
-        <p class="eyebrow">From the people who love you</p>
-        <h2>Desre’s Memory Wall</h2>
-        <p>Leave a message, share a favourite moment, or upload a photograph for Desre to treasure.</p>
-      </div>
+      <div class="photo-upload-card reveal">
+        <div class="section-heading compact-heading">
+          <p class="eyebrow">Add to her collection</p>
+          <h3>Upload a Memory Photo</h3>
+          <p>Use the private PIN to add a photograph and a short memory. It will be saved permanently.</p>
+        </div>
 
-      <div class="memory-layout">
-        <form id="memory-form" class="memory-form reveal">
+        <form id="memory-form" class="memory-form">
           <label>
             Your name
-            <input id="memory-name" type="text" maxlength="60" required placeholder="e.g. Your daughter’s name">
+            <input id="memory-name" type="text" maxlength="60" required placeholder="Your name">
           </label>
 
           <label>
-            Your message or memory
-            <textarea id="memory-message" maxlength="800" required placeholder="Share a birthday wish, a funny story, or a favourite memory..."></textarea>
+            A short memory or caption
+            <textarea id="memory-message" maxlength="800" placeholder="Write something special..."></textarea>
           </label>
 
           <label>
-            Add a photograph
-            <input id="memory-photo" type="file" accept="image/*">
-            <small>Optional. Please use a clear image smaller than 5 MB.</small>
+            Choose a photograph
+            <input id="memory-photo" type="file" accept="image/*" required>
+            <small>Please use a clear image smaller than 5 MB.</small>
           </label>
 
           <label>
             Upload PIN
             <input id="memory-pin" type="password" inputmode="numeric" maxlength="4" required placeholder="Enter the 4-digit PIN">
-            <small>The PIN protects the wall from random public uploads.</small>
           </label>
 
-          <button class="button primary" type="submit">Add to the Memory Wall</button>
+          <button class="button primary" type="submit">Upload Photo</button>
           <p id="form-status" class="form-status" role="status"></p>
         </form>
-
-        <div>
-          <div id="memory-wall" class="memory-wall" aria-live="polite">
-          </div>
-          <p id="firebase-note" class="setup-note">
-            Photos and messages are saved permanently in Desre’s private Supabase memory collection.
-          </p>
-        </div>
       </div>
+
     </section>
 
     <section class="finale section">
