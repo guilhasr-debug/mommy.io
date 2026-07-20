@@ -96,3 +96,15 @@ read publicly before their `unlock_date` because of the Row Level Security polic
 
 The full-screen birthday surprise appears only on **22 July 2026** in South African time.
 It appears once per browser session and links directly to the unlocked birthday letter.
+
+
+## Production email values
+
+Use these Supabase Edge Function secrets after verifying the domain in Resend:
+
+- `DESRE_EMAIL` = `desreclaase@gmail.com`
+- `FROM_EMAIL` = `Claudia <letters@my-friend-des.co.za>`
+- `RESEND_API_KEY` = your Resend API key
+- `UPLOAD_PIN_SHA256` = SHA-256 hash of `2207`
+
+The website is ready for `my-friend-des.co.za`.

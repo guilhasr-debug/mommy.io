@@ -1226,3 +1226,41 @@ img {
     border-radius: 20px;
   }
 }
+
+
+.admin-login-card {
+  max-width: 620px;
+  margin-inline: auto;
+}
+
+.admin-page-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.admin-lock-button {
+  width: auto;
+  flex: 0 0 auto;
+  color: var(--rose-dark);
+  background: rgba(125,63,80,.08);
+}
+
+#celebrate-button-slot:empty {
+  display: none;
+}
+
+#celebrate-button-slot {
+  margin-top: 1.25rem;
+}
+
+@media (max-width: 620px) {
+  .admin-page-heading {
+    display: grid;
+  }
+
+  .admin-lock-button {
+    width: 100%;
+  }
+}

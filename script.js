@@ -112,3 +112,49 @@ setInterval(() => {
   renderVault();
   updateBirthdayLetter();
 }, 60000);
+
+
+const celebrateButtonSlot = document.getElementById("celebrate-button-slot");
+
+function johannesburgDateParts() {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Africa/Johannesburg",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(new Date());
+
+  return Object.fromEntries(parts.map(part => [part.type, part.value]));
+}
+
+function isDesreBirthday() {
+  const parts = johannesburgDateParts();
+  return parts.year === "2026" && parts.month === "07" && parts.day === "22";
+}
+
+function renderBirthdayCelebrateButton() {
+  if (!celebrateButtonSlot) return;
+
+  celebrateButtonSlot.innerHTML = "";
+
+  if (!isDesreBirthday()) return;
+
+  const button = document.createElement("button");
+  button.id = "celebrate-button";
+  button.className = "button light";
+  button.type = "button";
+  button.textContent = "Celebrate Desre ✨";
+  button.addEventListener("click", () => {
+    if (typeof launchConfetti === "function") launchConfetti();
+    const surprise = document.getElementById("birthday-surprise");
+    if (surprise) {
+      surprise.classList.add("open");
+      surprise.setAttribute("aria-hidden", "false");
+    }
+  });
+
+  celebrateButtonSlot.appendChild(button);
+}
+
+renderBirthdayCelebrateButton();
+setInterval(renderBirthdayCelebrateButton, 60000);

@@ -13,9 +13,30 @@
   <main class="admin-page-shell">
     <a href="../" class="admin-back-link">← Back to Desre's website</a>
 
-    <section class="admin-page-card">
-      <p class="eyebrow">Protected vault management</p>
+    <section id="admin-login-card" class="admin-page-card admin-login-card">
+      <p class="eyebrow">Private access</p>
       <h1>Letter Vault Admin</h1>
+      <p>Enter the private PIN to open the letter management page.</p>
+
+      <form id="admin-login-form" class="letter-upload-form">
+        <label>
+          Admin PIN
+          <input id="admin-login-pin" type="password" inputmode="numeric" maxlength="4" required placeholder="Enter PIN">
+        </label>
+        <button class="button primary" type="submit">Open Admin</button>
+        <p id="admin-login-status" class="form-status" role="status"></p>
+      </form>
+    </section>
+
+    <section id="admin-page-card" class="admin-page-card" hidden>
+      <div class="admin-page-heading">
+        <div>
+          <p class="eyebrow">Protected vault management</p>
+          <h1>Letter Vault Admin</h1>
+        </div>
+        <button id="admin-lock-button" class="button admin-lock-button" type="button">Lock Admin</button>
+      </div>
+
       <p>
         Add or update a monthly letter. The letter remains sealed until its opening date,
         and Desre receives an email notification when it is added.
@@ -38,7 +59,7 @@
         </label>
 
         <label>
-          Upload PIN
+          Confirm PIN
           <input id="letter-pin" type="password" inputmode="numeric" maxlength="4" required placeholder="Enter PIN">
         </label>
 
