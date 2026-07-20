@@ -20,9 +20,15 @@ function formatDate(value) {
   });
 }
 function isUnlocked(value) { return new Date(value).getTime() <= Date.now(); }
+function dateKeyInJohannesburg(value) {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Africa/Johannesburg", year: "numeric", month: "2-digit", day: "2-digit"
+  }).formatToParts(new Date(value));
+  const map = Object.fromEntries(parts.map(part => [part.type, part.value]));
+  return `${map.year}-${map.month}-${map.day}`;
+}
 function isBirthdayLetter(letter) {
-  const a = new Date(letter.unlock_date).toLocaleDateString("en-CA", { timeZone: "Africa/Johannesburg" });
-  return a === "2026-07-22";
+  return dateKeyInJohannesburg(letter.unlock_date) === "2026-07-22";
 }
 function johannesburgDateParts() {
   const parts = new Intl.DateTimeFormat("en-CA", {
@@ -195,16 +201,28 @@ byId("surprise-open-letter")?.addEventListener("click", () => {
 });
 
 async function loadLetters() {
-  const { data, error } = await supabaseClient.rpc("get_letter_vault");
-  if (error) {
+  const container = byId("vault-timeline");
+  try {
+    // First use the vault RPC so future locked letters can still appear safely.
+    const rpcResult = await supabaseClient.rpc("get_letter_vault");
+    if (!rpcResult.error && Array.isArray(rpcResult.data) && rpcResult.data.length) {
+      letters = rpcResult.data;
+    } else {
+      // Reliable fallback: RLS permits the public site to read letters only after unlock.
+      const directResult = await supabaseClient
+        .from("letters")
+        .select("id,title,unlock_date,content")
+        .lte("unlock_date", new Date().toISOString())
+        .order("unlock_date", { ascending: true });
+      if (directResult.error) throw directResult.error;
+      letters = directResult.data || [];
+    }
+    renderVault();
+    updateBirthdayLetter();
+  } catch (error) {
     console.error("Letter load failed:", error);
-    const container = byId("vault-timeline");
-    if (container) container.innerHTML = `<div class="vault-empty"><h3>The vault could not be loaded</h3><p>Please try again shortly.</p></div>`;
-    return;
+    if (container) container.innerHTML = `<div class="vault-empty"><h3>The vault could not be loaded</h3><p>${escapeHtml(error.message || "Please try again shortly.")}</p></div>`;
   }
-  letters = data || [];
-  renderVault();
-  updateBirthdayLetter();
 }
 
 function openPhotoLightbox(url, caption) {
