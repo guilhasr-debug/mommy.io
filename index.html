@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A special birthday countdown and memory wall for Desre, created with love by Claudia." />
+  <title>Desre's Birthday Celebration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="petals" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <a class="brand" href="#home">For Desre</a>
+    <button class="menu-button" aria-label="Open navigation" aria-expanded="false">☰</button>
+    <nav class="site-nav">
+      <a href="#home">Home</a>
+      <a href="#message">Birthday Message</a>
+      <a href="#special">Why You’re Special</a>
+      <a href="#memories">Memory Wall</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="home" class="hero section">
+      <div class="hero-copy reveal">
+        <p class="eyebrow">Counting down to 22 July 2026</p>
+        <h1>Celebrating the beautiful soul that is <span>Desre</span></h1>
+        <p class="hero-intro">
+          A little corner of the internet created with love, memories, laughter,
+          and all the reasons you mean so much to the people around you.
+        </p>
+
+        <div id="countdown" class="countdown" aria-live="polite">
+          <div><strong id="days">00</strong><span>Days</span></div>
+          <div><strong id="hours">00</strong><span>Hours</span></div>
+          <div><strong id="minutes">00</strong><span>Minutes</span></div>
+          <div><strong id="seconds">00</strong><span>Seconds</span></div>
+        </div>
+
+        <a class="button primary" href="#message">Open Your Birthday Message</a>
+      </div>
+
+      <div class="hero-art reveal">
+        <div class="photo-frame large">
+          <img src="assets/desre-hero.jpg" alt="A special photograph of Desre" onerror="this.style.display='none'; this.parentElement.classList.add('photo-placeholder');">
+          <span class="placeholder-copy">Add Desre’s favourite photo here</span>
+        </div>
+        <div class="floral flourish-one">❀</div>
+        <div class="floral flourish-two">✿</div>
+      </div>
+    </section>
+
+    <section class="quote-strip">
+      <p>“Some people make the world more beautiful simply by being in it.”</p>
+    </section>
+
+    <section id="message" class="section message-section">
+      <div class="section-heading reveal">
+        <p class="eyebrow">A birthday letter</p>
+        <h2>My Dearest Desre</h2>
+      </div>
+
+      <article class="letter-card reveal">
+        <p>
+          Today is a celebration of you — your kindness, your strength, your
+          warmth, and the beautiful way you make the people around you feel
+          loved and seen.
+        </p>
+        <p>
+          I am so grateful for every laugh we have shared, every conversation,
+          every memory, and every moment in which your friendship has made life
+          brighter. You have a rare gift for bringing comfort, joy, and calm
+          into the lives of others, often without even realising how deeply
+          appreciated you are.
+        </p>
+        <p>
+          On your birthday, I hope you are reminded of how special you truly
+          are. May this next year bring you the same happiness, support, and
+          love that you so freely give to everyone else. May you feel celebrated
+          not only today, but every day.
+        </p>
+        <p>
+          Happy Birthday, my beautiful friend. Thank you for being exactly who
+          you are.
+        </p>
+        <p class="signature">With all my love,<br><strong>Claudia</strong></p>
+      </article>
+    </section>
+
+    <section id="special" class="section special-section">
+      <div class="section-heading reveal">
+        <p class="eyebrow">A friend like no other</p>
+        <h2>Why You Are So Special</h2>
+        <p>These are only a few of the many things that make you unforgettable.</p>
+      </div>
+
+      <div class="quality-grid">
+        <article class="quality-card reveal">
+          <span>01</span>
+          <h3>Your Beautiful Heart</h3>
+          <p>You care deeply, love generously, and always make room for the people who need you.</p>
+        </article>
+        <article class="quality-card reveal">
+          <span>02</span>
+          <h3>Your Strength</h3>
+          <p>You face life with courage and grace, even during the moments that ask the most of you.</p>
+        </article>
+        <article class="quality-card reveal">
+          <span>03</span>
+          <h3>Your Friendship</h3>
+          <p>You are loyal, sincere, and present. Your friendship feels like safety, laughter, and home.</p>
+        </article>
+        <article class="quality-card reveal">
+          <span>04</span>
+          <h3>Your Love as a Mother</h3>
+          <p>The love you give your daughters is powerful, constant, and woven into everything you do.</p>
+        </article>
+        <article class="quality-card reveal">
+          <span>05</span>
+          <h3>Your Light</h3>
+          <p>You bring warmth to ordinary days and have a way of making people feel better just by being near.</p>
+        </article>
+        <article class="quality-card reveal">
+          <span>06</span>
+          <h3>Your Wonderful Spirit</h3>
+          <p>You are genuine, vibrant, and entirely yourself — and that is one of your greatest gifts.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="gallery-section section">
+      <div class="section-heading reveal">
+        <p class="eyebrow">Moments worth keeping</p>
+        <h2>A Few Favourite Memories</h2>
+      </div>
+      <div class="photo-grid">
+        <div class="photo-frame reveal"><img src="assets/memory-1.jpg" alt="A favourite memory with Desre" onerror="this.style.display='none'; this.parentElement.classList.add('photo-placeholder');"><span class="placeholder-copy">Memory photo 1</span></div>
+        <div class="photo-frame reveal"><img src="assets/memory-2.jpg" alt="A favourite memory with Desre" onerror="this.style.display='none'; this.parentElement.classList.add('photo-placeholder');"><span class="placeholder-copy">Memory photo 2</span></div>
+        <div class="photo-frame reveal"><img src="assets/memory-3.jpg" alt="A favourite memory with Desre" onerror="this.style.display='none'; this.parentElement.classList.add('photo-placeholder');"><span class="placeholder-copy">Memory photo 3</span></div>
+      </div>
+    </section>
+
+    <section id="memories" class="section memories-section">
+      <div class="section-heading reveal">
+        <p class="eyebrow">From the people who love you</p>
+        <h2>Desre’s Memory Wall</h2>
+        <p>Leave a message, share a favourite moment, or upload a photograph for Desre to treasure.</p>
+      </div>
+
+      <div class="memory-layout">
+        <form id="memory-form" class="memory-form reveal">
+          <label>
+            Your name
+            <input id="memory-name" type="text" maxlength="60" required placeholder="e.g. Your daughter’s name">
+          </label>
+
+          <label>
+            Your message or memory
+            <textarea id="memory-message" maxlength="800" required placeholder="Share a birthday wish, a funny story, or a favourite memory..."></textarea>
+          </label>
+
+          <label>
+            Add a photograph
+            <input id="memory-photo" type="file" accept="image/*">
+            <small>Optional. Please use a clear image smaller than 5 MB.</small>
+          </label>
+
+          <button class="button primary" type="submit">Add to the Memory Wall</button>
+          <p id="form-status" class="form-status" role="status"></p>
+        </form>
+
+        <div>
+          <div id="memory-wall" class="memory-wall" aria-live="polite">
+            <article class="memory-card featured reveal">
+              <p class="memory-message">“Happy Birthday, Mom. Thank you for being our safe place, our greatest supporter, and the heart of our family.”</p>
+              <p class="memory-author">— With love from your daughters</p>
+            </article>
+          </div>
+          <p id="firebase-note" class="setup-note">
+            The shared memory wall becomes active after the Firebase details are added.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="finale section">
+      <div class="finale-card reveal">
+        <p class="eyebrow">For your next chapter</p>
+        <h2>May this year be filled with beautiful surprises.</h2>
+        <p>
+          May you laugh often, love deeply, dream boldly, and always remember
+          how treasured you are.
+        </p>
+        <button id="celebrate-button" class="button light" type="button">Celebrate Desre ✨</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Created with love for Desre by Claudia • 22 July 2026</p>
+  </footer>
+
+  <div id="birthday-modal" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <button id="close-modal" class="modal-close" aria-label="Close">×</button>
+      <p class="eyebrow">Today is your day</p>
+      <h2>Happy Birthday, Desre!</h2>
+      <p>You are deeply loved, endlessly appreciated, and so worth celebrating.</p>
+      <div class="modal-hearts">♡ ✦ ♡ ✦ ♡</div>
+    </div>
+  </div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
