@@ -1,45 +1,72 @@
-const birthday = new Date("2026-07-22T00:00:00+02:00");
-const countdown = document.getElementById("countdown");
-const daysEl = document.getElementById("days");
-const hoursEl = document.getElementById("hours");
-const minutesEl = document.getElementById("minutes");
-const secondsEl = document.getElementById("seconds");
+const SUPABASE_URL = "https://fkmssqbzfsqqonoghmmz.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_nWTkmo1OOY4Y32WZdhdKMw_ZkKaLWO8";
+const BIRTHDAY_ISO = "2026-07-22T00:00:00+02:00";
+const birthday = new Date(BIRTHDAY_ISO);
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+let letters = [];
+
+function byId(id) { return document.getElementById(id); }
+function escapeHtml(value = "") {
+  return String(value).replace(/[&<>'"]/g, char => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;"
+  })[char]);
+}
+function formatDate(value) {
+  return new Date(value).toLocaleDateString("en-ZA", {
+    day: "numeric", month: "long", year: "numeric", timeZone: "Africa/Johannesburg"
+  });
+}
+function isUnlocked(value) { return new Date(value).getTime() <= Date.now(); }
+function isBirthdayLetter(letter) {
+  const a = new Date(letter.unlock_date).toLocaleDateString("en-CA", { timeZone: "Africa/Johannesburg" });
+  return a === "2026-07-22";
+}
+function johannesburgDateParts() {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Africa/Johannesburg", year: "numeric", month: "2-digit", day: "2-digit"
+  }).formatToParts(new Date());
+  return Object.fromEntries(parts.map(part => [part.type, part.value]));
+}
+function isDesreBirthday() {
+  const p = johannesburgDateParts();
+  return p.year === "2026" && p.month === "07" && p.day === "22";
+}
 
 function updateCountdown() {
-  const now = new Date();
-  const difference = birthday.getTime() - now.getTime();
-
+  const countdown = byId("countdown");
+  if (!countdown) return;
+  const difference = birthday.getTime() - Date.now();
   if (difference <= 0) {
     countdown.innerHTML = "<div style='grid-column:1/-1'><strong>Happy Birthday!</strong><span>Today we celebrate Desre</span></div>";
     return;
   }
-
-  daysEl.textContent = String(Math.floor(difference / 86400000)).padStart(2, "0");
-  hoursEl.textContent = String(Math.floor((difference / 3600000) % 24)).padStart(2, "0");
-  minutesEl.textContent = String(Math.floor((difference / 60000) % 60)).padStart(2, "0");
-  secondsEl.textContent = String(Math.floor((difference / 1000) % 60)).padStart(2, "0");
+  byId("days").textContent = String(Math.floor(difference / 86400000)).padStart(2, "0");
+  byId("hours").textContent = String(Math.floor((difference / 3600000) % 24)).padStart(2, "0");
+  byId("minutes").textContent = String(Math.floor((difference / 60000) % 60)).padStart(2, "0");
+  byId("seconds").textContent = String(Math.floor((difference / 1000) % 60)).padStart(2, "0");
 }
 updateCountdown();
 setInterval(updateCountdown, 1000);
 
 const menuButton = document.querySelector(".menu-button");
 const nav = document.querySelector(".site-nav");
-menuButton.addEventListener("click", () => {
-  const open = nav.classList.toggle("open");
-  menuButton.setAttribute("aria-expanded", String(open));
-});
-nav.querySelectorAll("a").forEach(link => link.addEventListener("click", () => nav.classList.remove("open")));
-
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) entry.target.classList.add("visible");
+if (menuButton && nav) {
+  menuButton.addEventListener("click", () => {
+    const open = nav.classList.toggle("open");
+    menuButton.setAttribute("aria-expanded", String(open));
   });
-}, { threshold: 0.12 });
-document.querySelectorAll(".reveal").forEach(item => observer.observe(item));
+  nav.querySelectorAll("a").forEach(link => link.addEventListener("click", () => nav.classList.remove("open")));
+}
 
-const modal = document.getElementById("birthday-modal");
-const celebrateButton = document.getElementById("celebrate-button");
-const closeModal = document.getElementById("close-modal");
+if ("IntersectionObserver" in window) {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add("visible"); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll(".reveal").forEach(item => observer.observe(item));
+} else {
+  document.querySelectorAll(".reveal").forEach(item => item.classList.add("visible"));
+}
 
 function launchConfetti() {
   const symbols = ["✦", "♥", "●", "❀"];
@@ -55,106 +82,212 @@ function launchConfetti() {
     setTimeout(() => piece.remove(), 6500);
   }
 }
-function openModal() {
-  modal.classList.add("open");
-  modal.setAttribute("aria-hidden", "false");
+
+function openBirthdaySurprise() {
+  const surprise = byId("birthday-surprise");
+  if (!surprise) return;
+  surprise.classList.add("open");
+  surprise.setAttribute("aria-hidden", "false");
   launchConfetti();
 }
-function hideModal() {
-  modal.classList.remove("open");
-  modal.setAttribute("aria-hidden", "true");
-}
-celebrateButton.addEventListener("click", openModal);
-closeModal.addEventListener("click", hideModal);
-modal.addEventListener("click", event => { if (event.target === modal) hideModal(); });
-
-
-
-
-const SUPABASE_URL = "https://fkmssqbzfsqqonoghmmz.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_nWTkmo1OOY4Y32WZdhdKMw_ZkKaLWO8";
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-
-const birthdayUnlockDate = new Date("2026-07-22T00:00:00+02:00");
-const birthdayEndDate = new Date("2026-07-23T00:00:00+02:00");
-
-const memoryForm = document.getElementById("memory-form");
-const memoryWall = document.getElementById("memory-wall");
-const memoryStatus = document.getElementById("form-status");
-const uploadedGallery = document.getElementById("uploaded-photo-gallery");
-const galleryEmpty = document.getElementById("gallery-empty");
-
-const vaultTimeline = document.getElementById("vault-timeline");
-const vaultModal = document.getElementById("vault-modal");
-const vaultModalContent = document.getElementById("vault-modal-content");
-const closeVaultModalButton = document.getElementById("close-vault-modal");
-
-const birthdayCard = document.getElementById("birthday-message-card");
-const birthdayTitle = document.getElementById("birthday-message-title");
-const birthdayStatus = document.getElementById("birthday-message-status");
-const birthdayButton = document.getElementById("open-birthday-letter");
-const birthdaySubtext = document.getElementById("birthday-message-subtext");
-
-const birthdaySurprise = document.getElementById("birthday-surprise");
-const closeSurpriseButton = document.getElementById("close-surprise");
-const surpriseOpenLetterButton = document.getElementById("surprise-open-letter");
-
-const photoLightbox = document.getElementById("photo-lightbox");
-const photoLightboxImage = document.getElementById("photo-lightbox-image");
-const photoLightboxCaption = document.getElementById("photo-lightbox-caption");
-const closePhotoLightboxButton = document.getElementById("close-photo-lightbox");
-
-
-
-loadMemories();
-loadLetters();
-setInterval(() => {
-  renderVault();
-  updateBirthdayLetter();
-}, 60000);
-
-
-const celebrateButtonSlot = document.getElementById("celebrate-button-slot");
-
-function johannesburgDateParts() {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Africa/Johannesburg",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit"
-  }).formatToParts(new Date());
-
-  return Object.fromEntries(parts.map(part => [part.type, part.value]));
-}
-
-function isDesreBirthday() {
-  const parts = johannesburgDateParts();
-  return parts.year === "2026" && parts.month === "07" && parts.day === "22";
+function closeBirthdaySurprise() {
+  const surprise = byId("birthday-surprise");
+  if (!surprise) return;
+  surprise.classList.remove("open");
+  surprise.setAttribute("aria-hidden", "true");
 }
 
 function renderBirthdayCelebrateButton() {
-  if (!celebrateButtonSlot) return;
-
-  celebrateButtonSlot.innerHTML = "";
-
+  const slot = byId("celebrate-button-slot");
+  if (!slot) return;
+  slot.innerHTML = "";
   if (!isDesreBirthday()) return;
-
   const button = document.createElement("button");
-  button.id = "celebrate-button";
   button.className = "button light";
   button.type = "button";
   button.textContent = "Celebrate Desre ✨";
-  button.addEventListener("click", () => {
-    if (typeof launchConfetti === "function") launchConfetti();
-    const surprise = document.getElementById("birthday-surprise");
-    if (surprise) {
-      surprise.classList.add("open");
-      surprise.setAttribute("aria-hidden", "false");
-    }
-  });
-
-  celebrateButtonSlot.appendChild(button);
+  button.addEventListener("click", openBirthdaySurprise);
+  slot.appendChild(button);
 }
-
 renderBirthdayCelebrateButton();
 setInterval(renderBirthdayCelebrateButton, 60000);
+byId("close-surprise")?.addEventListener("click", closeBirthdaySurprise);
+
+function openVaultModal(letter) {
+  const modal = byId("vault-modal");
+  const content = byId("vault-modal-content");
+  if (!modal || !content || !letter || !isUnlocked(letter.unlock_date) || !letter.content) return;
+  content.innerHTML = `
+    <p class="eyebrow">Opened ${escapeHtml(formatDate(letter.unlock_date))}</p>
+    <h2>${escapeHtml(letter.title)}</h2>
+    <div class="hidden-letter-content">${escapeHtml(letter.content).replace(/\n/g, "<br>")}</div>`;
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
+}
+function closeVaultModal() {
+  const modal = byId("vault-modal");
+  if (!modal) return;
+  modal.classList.remove("open");
+  modal.setAttribute("aria-hidden", "true");
+}
+byId("close-vault-modal")?.addEventListener("click", closeVaultModal);
+byId("vault-modal")?.addEventListener("click", event => { if (event.target === byId("vault-modal")) closeVaultModal(); });
+
+function renderVault() {
+  const container = byId("vault-timeline");
+  if (!container) return;
+  const monthly = letters.filter(letter => !isBirthdayLetter(letter));
+  if (!monthly.length) {
+    container.innerHTML = `<div class="vault-empty"><div class="vault-empty-icon">✉</div><h3>No monthly letters yet</h3><p>New letters will appear here once Claudia adds them.</p></div>`;
+    return;
+  }
+  container.innerHTML = monthly.map(letter => {
+    const unlocked = isUnlocked(letter.unlock_date) && Boolean(letter.content);
+    return `<article class="vault-card ${unlocked ? "vault-letter" : "vault-sealed"}">
+      <div class="vault-icon">${unlocked ? "💌" : "🔒"}</div>
+      <p class="vault-month">${escapeHtml(formatDate(letter.unlock_date))}</p>
+      <h3>${escapeHtml(letter.title)}</h3>
+      <p class="vault-preview">${unlocked ? "This letter is ready to open." : "Safely sealed until its opening date."}</p>
+      <button class="button ${unlocked ? "primary" : "vault-button"}" type="button" ${unlocked ? "" : "disabled"} data-letter-id="${letter.id}">
+        ${unlocked ? "Open Letter" : `Locked until ${escapeHtml(formatDate(letter.unlock_date))}`}
+      </button>
+    </article>`;
+  }).join("");
+  container.querySelectorAll("[data-letter-id]").forEach(button => {
+    button.addEventListener("click", () => openVaultModal(letters.find(letter => letter.id === button.dataset.letterId)));
+  });
+}
+
+function updateBirthdayLetter() {
+  const card = byId("birthday-message-card");
+  const title = byId("birthday-message-title");
+  const status = byId("birthday-message-status");
+  const button = byId("open-birthday-letter");
+  const subtext = byId("birthday-message-subtext");
+  if (!card || !title || !status || !button) return;
+  const letter = letters.find(isBirthdayLetter);
+  const unlocked = letter && isUnlocked(letter.unlock_date) && Boolean(letter.content);
+  if (unlocked) {
+    card.classList.remove("locked");
+    title.textContent = letter.title;
+    status.textContent = "Your birthday letter is ready to open.";
+    button.disabled = false;
+    button.textContent = "Open Your Birthday Letter";
+    if (subtext) subtext.textContent = "Your special birthday letter is now open.";
+    button.onclick = () => openVaultModal(letter);
+  } else {
+    card.classList.add("locked");
+    title.textContent = "A Sealed Birthday Letter";
+    status.textContent = letter ? "Your birthday message is safely sealed until your special day." : "Claudia is still preparing your special birthday message.";
+    button.disabled = true;
+    button.textContent = "Locked until 22 July 2026";
+    button.onclick = null;
+  }
+}
+byId("surprise-open-letter")?.addEventListener("click", () => {
+  const letter = letters.find(isBirthdayLetter);
+  if (letter && isUnlocked(letter.unlock_date) && letter.content) {
+    closeBirthdaySurprise();
+    openVaultModal(letter);
+  }
+});
+
+async function loadLetters() {
+  const { data, error } = await supabaseClient.rpc("get_letter_vault");
+  if (error) {
+    console.error("Letter load failed:", error);
+    const container = byId("vault-timeline");
+    if (container) container.innerHTML = `<div class="vault-empty"><h3>The vault could not be loaded</h3><p>Please try again shortly.</p></div>`;
+    return;
+  }
+  letters = data || [];
+  renderVault();
+  updateBirthdayLetter();
+}
+
+function openPhotoLightbox(url, caption) {
+  const lightbox = byId("photo-lightbox");
+  const image = byId("photo-lightbox-image");
+  const text = byId("photo-lightbox-caption");
+  if (!lightbox || !image || !text) return;
+  image.src = url;
+  image.alt = caption || "Memory photograph";
+  text.textContent = caption || "";
+  lightbox.classList.add("open");
+  lightbox.setAttribute("aria-hidden", "false");
+}
+function closePhotoLightbox() {
+  const lightbox = byId("photo-lightbox");
+  if (!lightbox) return;
+  lightbox.classList.remove("open");
+  lightbox.setAttribute("aria-hidden", "true");
+}
+byId("close-photo-lightbox")?.addEventListener("click", closePhotoLightbox);
+byId("photo-lightbox")?.addEventListener("click", event => { if (event.target === byId("photo-lightbox")) closePhotoLightbox(); });
+
+async function loadMemories() {
+  const gallery = byId("uploaded-photo-gallery");
+  if (!gallery) return;
+  const { data, error } = await supabaseClient.from("memories").select("id,name,message,photo_url,created_at").eq("approved", true).order("created_at", { ascending: false });
+  if (error) {
+    console.error("Memory load failed:", error);
+    gallery.innerHTML = `<p class="gallery-empty">The photographs could not be loaded right now.</p>`;
+    return;
+  }
+  const photos = (data || []).filter(item => item.photo_url);
+  if (!photos.length) {
+    gallery.innerHTML = `<p class="gallery-empty">No shared photographs have been added yet.</p>`;
+    return;
+  }
+  gallery.innerHTML = photos.map(item => {
+    const caption = [item.message, item.name ? `Shared by ${item.name}` : ""].filter(Boolean).join(" — ");
+    return `<button class="uploaded-photo-card uploaded-photo-button" type="button" data-photo-url="${escapeHtml(item.photo_url)}" data-caption="${escapeHtml(caption)}">
+      <img src="${escapeHtml(item.photo_url)}" alt="${escapeHtml(item.message || `Memory shared by ${item.name}`)}" loading="lazy">
+      <span class="uploaded-photo-caption"><strong>${escapeHtml(item.name)}</strong>${item.message ? `<small>${escapeHtml(item.message)}</small>` : ""}</span>
+    </button>`;
+  }).join("");
+  gallery.querySelectorAll("[data-photo-url]").forEach(button => {
+    button.addEventListener("click", () => openPhotoLightbox(button.dataset.photoUrl, button.dataset.caption));
+  });
+}
+
+byId("memory-form")?.addEventListener("submit", async event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const button = form.querySelector("button[type='submit']");
+  const status = byId("form-status");
+  const photo = byId("memory-photo").files[0];
+  if (!photo) return;
+  if (photo.size > 5 * 1024 * 1024) {
+    status.textContent = "Please choose an image smaller than 5 MB.";
+    return;
+  }
+  button.disabled = true;
+  status.textContent = "Uploading your memory...";
+  try {
+    const body = new FormData();
+    body.append("name", byId("memory-name").value.trim());
+    body.append("message", byId("memory-message").value.trim());
+    body.append("pin", byId("memory-pin").value.trim());
+    body.append("photo", photo);
+    const response = await fetch(`${SUPABASE_URL}/functions/v1/upload-memory`, {
+      method: "POST",
+      headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}` },
+      body
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(result.error || "The memory could not be uploaded.");
+    form.reset();
+    status.textContent = "Your memory has been added with love.";
+    await loadMemories();
+  } catch (error) {
+    console.error(error);
+    status.textContent = error.message || "Something went wrong. Please try again.";
+  } finally {
+    button.disabled = false;
+  }
+});
+
+loadMemories();
+loadLetters();
+setInterval(() => { renderVault(); updateBirthdayLetter(); }, 60000);

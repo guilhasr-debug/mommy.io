@@ -1,0 +1,17 @@
+DESRE WEBSITE - SIMPLE SETUP ORDER
+
+1. Upload the website files to GitHub.
+2. In Supabase SQL Editor, copy and run SUPABASE-SQL-COPY-PASTE.txt.
+3. In Supabase Edge Functions, create upload-memory and paste UPLOAD-MEMORY-FUNCTION.txt.
+4. Create upload-letter and paste UPLOAD-LETTER-FUNCTION.txt.
+5. Turn Verify JWT OFF for both functions.
+6. Add Edge Function secrets:
+   UPLOAD_PIN_SHA256 = c838df5335c1eba2532f32090cd555d17c9e218289d99ecaf55525d7b199aa88
+   DESRE_EMAIL = desreclaase@gmail.com
+   FROM_EMAIL = Claudia <letters@my-friend-des.co.za>
+   RESEND_API_KEY = your Resend API key
+7. Test a photo upload and a letter upload.
+
+Admin page:
+https://my-friend-des.co.za/admin/
+PIN: 2207
