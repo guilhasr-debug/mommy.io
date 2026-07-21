@@ -245,6 +245,11 @@ function closePhotoLightbox() {
 byId("close-photo-lightbox")?.addEventListener("click", closePhotoLightbox);
 byId("photo-lightbox")?.addEventListener("click", event => { if (event.target === byId("photo-lightbox")) closePhotoLightbox(); });
 
+function displayMemoryName(name) {
+  const cleanName = String(name || "").trim();
+  return cleanName.toLowerCase() === "vanity" ? "Caity" : cleanName;
+}
+
 async function loadMemories() {
   const gallery = byId("uploaded-photo-gallery");
   if (!gallery) return;
@@ -260,10 +265,11 @@ async function loadMemories() {
     return;
   }
   gallery.innerHTML = photos.map(item => {
-    const caption = [item.message, item.name ? `Shared by ${item.name}` : ""].filter(Boolean).join(" — ");
+    const displayName = displayMemoryName(item.name);
+    const caption = [item.message, displayName ? `Shared by ${displayName}` : ""].filter(Boolean).join(" — ");
     return `<button class="uploaded-photo-card uploaded-photo-button" type="button" data-photo-url="${escapeHtml(item.photo_url)}" data-caption="${escapeHtml(caption)}">
-      <img src="${escapeHtml(item.photo_url)}" alt="${escapeHtml(item.message || `Memory shared by ${item.name}`)}" loading="lazy">
-      <span class="uploaded-photo-caption"><strong>${escapeHtml(item.name)}</strong>${item.message ? `<small>${escapeHtml(item.message)}</small>` : ""}</span>
+      <img src="${escapeHtml(item.photo_url)}" alt="${escapeHtml(item.message || `Memory shared by ${displayName}`)}" loading="lazy">
+      <span class="uploaded-photo-caption"><strong>${escapeHtml(displayName)}</strong>${item.message ? `<small>${escapeHtml(item.message)}</small>` : ""}</span>
     </button>`;
   }).join("");
   gallery.querySelectorAll("[data-photo-url]").forEach(button => {
