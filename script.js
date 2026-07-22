@@ -28,7 +28,17 @@ function dateKeyInJohannesburg(value) {
   return `${map.year}-${map.month}-${map.day}`;
 }
 function isBirthdayLetter(letter) {
-  return dateKeyInJohannesburg(letter.unlock_date) === "2026-07-22";
+  const title = String(letter?.title || "").toLowerCase();
+  return dateKeyInJohannesburg(letter.unlock_date) === "2026-07-22"
+    || title.includes("birthday");
+}
+
+function getBirthdayLetter() {
+  return letters.find(isBirthdayLetter);
+}
+
+function birthdayLetterIsUnlocked(letter) {
+  return Boolean(letter?.content) && (isDesreBirthday() || isUnlocked(letter.unlock_date));
 }
 function johannesburgDateParts() {
   const parts = new Intl.DateTimeFormat("en-CA", {
@@ -128,7 +138,7 @@ function openVaultModal(letter) {
   content.innerHTML = `
     <p class="eyebrow">Opened ${escapeHtml(formatDate(letter.unlock_date))}</p>
     <h2>${escapeHtml(letter.title)}</h2>
-    <div class="hidden-letter-content" style="display:block !important; visibility:visible !important; opacity:1 !important; max-height:none !important; height:auto !important; overflow:visible !important; color:#4a3a3a !important; margin-top:1.5rem; font-size:1.05rem; line-height:1.8; white-space:normal;">${escapeHtml(letter.content).replace(/\n/g, "<br>")}</div>`;
+    <div class="hidden-letter-content">${escapeHtml(letter.content).replace(/\n/g, "<br>")}</div>`;
   modal.classList.add("open");
   modal.setAttribute("aria-hidden", "false");
 }
@@ -173,8 +183,8 @@ function updateBirthdayLetter() {
   const button = byId("open-birthday-letter");
   const subtext = byId("birthday-message-subtext");
   if (!card || !title || !status || !button) return;
-  const letter = letters.find(isBirthdayLetter);
-  const unlocked = letter && isUnlocked(letter.unlock_date) && Boolean(letter.content);
+  const letter = getBirthdayLetter();
+  const unlocked = letter && birthdayLetterIsUnlocked(letter);
   if (unlocked) {
     card.classList.remove("locked");
     title.textContent = letter.title;
@@ -193,8 +203,8 @@ function updateBirthdayLetter() {
   }
 }
 byId("surprise-open-letter")?.addEventListener("click", () => {
-  const letter = letters.find(isBirthdayLetter);
-  if (letter && isUnlocked(letter.unlock_date) && letter.content) {
+  const letter = getBirthdayLetter();
+  if (letter && birthdayLetterIsUnlocked(letter)) {
     closeBirthdaySurprise();
     openVaultModal(letter);
   }

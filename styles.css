@@ -620,7 +620,12 @@ footer {
 }
 
 .hidden-letter-content {
-  display: none;
+  display: block;
+  margin-top: 1.5rem;
+  color: #4a3a3a;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  white-space: normal;
 }
 
 .vault-sealed {
