@@ -28,7 +28,17 @@ function dateKeyInJohannesburg(value) {
   return `${map.year}-${map.month}-${map.day}`;
 }
 function isBirthdayLetter(letter) {
-  return dateKeyInJohannesburg(letter.unlock_date) === "2026-07-22";
+  const title = String(letter?.title || "").toLowerCase();
+  return dateKeyInJohannesburg(letter.unlock_date) === "2026-07-22"
+    || title.includes("birthday");
+}
+
+function getBirthdayLetter() {
+  return letters.find(isBirthdayLetter);
+}
+
+function birthdayLetterIsUnlocked(letter) {
+  return Boolean(letter?.content) && (isDesreBirthday() || isUnlocked(letter.unlock_date));
 }
 function johannesburgDateParts() {
   const parts = new Intl.DateTimeFormat("en-CA", {
@@ -173,8 +183,8 @@ function updateBirthdayLetter() {
   const button = byId("open-birthday-letter");
   const subtext = byId("birthday-message-subtext");
   if (!card || !title || !status || !button) return;
-  const letter = letters.find(isBirthdayLetter);
-  const unlocked = letter && isUnlocked(letter.unlock_date) && Boolean(letter.content);
+  const letter = getBirthdayLetter();
+  const unlocked = letter && birthdayLetterIsUnlocked(letter);
   if (unlocked) {
     card.classList.remove("locked");
     title.textContent = letter.title;
@@ -193,8 +203,8 @@ function updateBirthdayLetter() {
   }
 }
 byId("surprise-open-letter")?.addEventListener("click", () => {
-  const letter = letters.find(isBirthdayLetter);
-  if (letter && isUnlocked(letter.unlock_date) && letter.content) {
+  const letter = getBirthdayLetter();
+  if (letter && birthdayLetterIsUnlocked(letter)) {
     closeBirthdaySurprise();
     openVaultModal(letter);
   }
